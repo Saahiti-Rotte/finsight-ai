@@ -22,6 +22,8 @@ import MonthlyReport from "../components/MonthlyReport";
 
 import ExportReport from "../components/ExportReport";
 
+import EmptyState from "../components/EmptyState";
+
 export default function Dashboard({
   transactions,
   setTransactions,
@@ -34,95 +36,130 @@ export default function Dashboard({
   spendTrendData,
   categoryData,
 }) {
+  // EMPTY STATE
+  const hasTransactions =
+    transactions.length > 0;
+
   return (
     <>
-      {/* AI INSIGHT */}
-      <AIInsightBanner
-        totalSpent={totalSpent}
-      />
+      {/* EMPTY EXPERIENCE */}
+      {!hasTransactions ? (
+        <>
+          <EmptyState />
 
-      {/* KPI ROW */}
-      <KPIRow
-        totalSpent={totalSpent}
-        budgetLeft={budgetLeft}
-        savingsScore={savingsScore}
-        subscriptions={subscriptions}
-      />
-
-      {/* CHARTS */}
-      <div className="two-col">
-        <SpendTrend
-          data={spendTrendData}
-        />
-
-        <CategoryChart
-          data={categoryData}
-        />
-      </div>
-
-      {/* LOWER GRID */}
-      <div className="three-col">
-        {/* TRANSACTIONS */}
-        <Transactions
-          transactions={transactions}
-        />
-
-        {/* RIGHT COLUMN */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-          }}
-        >
-          <HealthScore
-            savingsScore={
-              savingsScore
+          <AddTransaction
+            setTransactions={
+              setTransactions
+            }
+          />
+        </>
+      ) : (
+        <>
+          {/* AI INSIGHT */}
+          <AIInsightBanner
+            totalSpent={
+              totalSpent
             }
           />
 
-          <AnomalyCard
-            transactions={
-              transactions
+          {/* KPI ROW */}
+          <KPIRow
+            totalSpent={
+              totalSpent
             }
-          />
-
-          <RecurringPayments
-            transactions={
-              transactions
-            }
-          />
-
-          <BudgetForecast
-            transactions={
-              transactions
-            }
-          />
-
-          <MonthlyReport
-            transactions={
-              transactions
-            }
-          />
-
-          {/* PDF EXPORT */}
-          <ExportReport
-            transactions={
-              transactions
+            budgetLeft={
+              budgetLeft
             }
             savingsScore={
               savingsScore
             }
+            subscriptions={
+              subscriptions
+            }
           />
-        </div>
-      </div>
 
-      {/* ADD TRANSACTION */}
-      <AddTransaction
-        setTransactions={
-          setTransactions
-        }
-      />
+          {/* CHARTS */}
+          <div className="two-col">
+            <SpendTrend
+              data={
+                spendTrendData
+              }
+            />
+
+            <CategoryChart
+              data={categoryData}
+            />
+          </div>
+
+          {/* LOWER GRID */}
+          <div className="three-col">
+            {/* TRANSACTIONS */}
+            <Transactions
+              transactions={
+                transactions
+              }
+            />
+
+            {/* RIGHT COLUMN */}
+            <div
+              style={{
+                display: "flex",
+
+                flexDirection:
+                  "column",
+
+                gap: "16px",
+              }}
+            >
+              <HealthScore
+                savingsScore={
+                  savingsScore
+                }
+              />
+
+              <AnomalyCard
+                transactions={
+                  transactions
+                }
+              />
+
+              <RecurringPayments
+                transactions={
+                  transactions
+                }
+              />
+
+              <BudgetForecast
+                transactions={
+                  transactions
+                }
+              />
+
+              <MonthlyReport
+                transactions={
+                  transactions
+                }
+              />
+
+              <ExportReport
+                transactions={
+                  transactions
+                }
+                savingsScore={
+                  savingsScore
+                }
+              />
+            </div>
+          </div>
+
+          {/* ADD TRANSACTION */}
+          <AddTransaction
+            setTransactions={
+              setTransactions
+            }
+          />
+        </>
+      )}
     </>
   );
 }

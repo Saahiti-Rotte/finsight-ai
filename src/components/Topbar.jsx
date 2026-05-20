@@ -1,18 +1,53 @@
-export default function Topbar({
-  openAI,
-}) {
+import { signOut } from "firebase/auth";
+
+import { auth } from "../firebase";
+
+export default function Topbar() {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="topbar">
-      <div className="topbar-title">
-        Good morning, Saahiti
+      {/* LEFT */}
+      <div>
+        <div className="top-title">
+          FinSight AI
+        </div>
+
+        <div className="top-sub">
+          AI-powered financial
+          intelligence platform
+        </div>
       </div>
 
-      <div className="topbar-right">
+      {/* RIGHT */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+        }}
+      >
+        <div className="user-pill">
+          Connected
+        </div>
+
         <button
-          className="btn-ai"
-          onClick={openAI}
+          onClick={handleLogout}
+          className="txn-btn"
+          style={{
+            padding:
+              "8px 14px",
+
+            fontSize: "12px",
+          }}
         >
-          Ask AI
+          Logout
         </button>
       </div>
     </div>

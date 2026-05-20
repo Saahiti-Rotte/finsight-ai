@@ -1,12 +1,12 @@
 import {
   collection,
   addDoc,
-  getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
-// SAVE USER TRANSACTION
+// SAVE TRANSACTION
 export async function saveTransaction(
   userId,
   transaction
@@ -29,33 +29,26 @@ export async function saveTransaction(
   }
 }
 
-// GET USER TRANSACTIONS
-export async function getTransactions(
-  userId
+// REALTIME TRANSACTIONS
+export function subscribeToTransactions(
+  userId,
+  callback
 ) {
-  try {
-    const snapshot =
-      await getDocs(
-        collection(
-          db,
-          "users",
-          userId,
-          "transactions"
-        )
-      );
+  return onSnapshot(
+    collection(
+      db,
+      "users",
+      userId,
+      "transactions"
+    ),
+    (snapshot) => {
+      const transactions =
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-    return snapshot.docs.map(
-      (doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })
-    );
-  } catch (err) {
-    console.error(
-      "Fetch Error:",
-      err
-    );
-
-    return [];
-  }
+      callback(transactions);
+    }
+  );
 }

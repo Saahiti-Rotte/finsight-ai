@@ -23,12 +23,14 @@ import AIPage from "./pages/AIPage";
 
 import AuthPage from "./pages/AuthPage";
 
+import LoadingScreen from "./components/LoadingScreen";
+
 import {
   transactions as initialData,
 } from "./data/financeData";
 
 import {
-  getTransactions,
+  subscribeToTransactions,
 } from "./services/firestoreService";
 
 export default function App() {
@@ -44,66 +46,71 @@ export default function App() {
   const [transactions, setTransactions] =
     useState(initialData);
 
-  // PAGE
+  // CURRENT PAGE
   const [currentPage, setCurrentPage] =
     useState("dashboard");
 
-  // AUTH STATE LISTENER
+  // AUTH + REALTIME FIRESTORE
   useEffect(() => {
-    const unsubscribe =
+    const unsubscribeAuth =
       onAuthStateChanged(
         auth,
         async (currentUser) => {
           setUser(currentUser);
 
-          // LOAD CLOUD DATA
+          // USER LOGGED IN
           if (currentUser) {
-            const cloudTransactions =
-  await getTransactions(
-    currentUser.uid
-  );
-
-            if (
-              cloudTransactions.length >
-              0
-            ) {
-              setTransactions(
-                cloudTransactions
+            const unsubscribeFirestore =
+              subscribeToTransactions(
+                currentUser.uid,
+                (
+                  cloudTransactions
+                ) => {
+                  if (
+                    cloudTransactions.length >
+                    0
+                  ) {
+                    setTransactions(
+                      cloudTransactions
+                    );
+                  } else {
+                    setTransactions([]);
+                  }
+                }
               );
-            }
+
+            setLoading(false);
+
+            return () =>
+              unsubscribeFirestore();
           }
+
+          // USER LOGGED OUT
+          setTransactions([]);
 
           setLoading(false);
         }
       );
 
-    return () => unsubscribe();
+    return () =>
+      unsubscribeAuth();
   }, []);
 
   // LOADING SCREEN
   if (loading) {
+    return <LoadingScreen />;
+  }
+
+  // NOT LOGGED IN
+  if (!user) {
     return (
-      <div
-        style={{
-          height: "100vh",
-
-          display: "flex",
-
-          justifyContent: "center",
-
-          alignItems: "center",
-
-          fontSize: "22px",
-
-          fontWeight: "700",
-        }}
-      >
-        Loading FinSight AI...
-      </div>
+      <AuthPage
+        setUser={setUser}
+      />
     );
   }
 
-  // EXPENSES
+  // EXPENSES ONLY
   const expenses = transactions.filter(
     (t) => !t.income
   );
@@ -152,7 +159,7 @@ export default function App() {
       t.amount;
   });
 
-  // CATEGORY DATA
+  // CATEGORY CHART DATA
   const categoryData =
     Object.entries(categoryTotals).map(
       ([name, value]) => ({
@@ -184,15 +191,6 @@ export default function App() {
       spending: totalSpent,
     },
   ];
-
-  // NOT LOGGED IN
-  if (!user) {
-    return (
-      <AuthPage
-        setUser={setUser}
-      />
-    );
-  }
 
   return (
     <div className="shell">
@@ -265,7 +263,7 @@ export default function App() {
             />
           )}
 
-          {/* AI */}
+          {/* AI PAGE */}
           {currentPage === "ai" && (
             <AIPage
               transactions={

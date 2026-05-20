@@ -6,22 +6,28 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey:
-    "AIzaSyAXh2PfV1Lr-MJgVaxFmxO422fLASc31Ic",
+    import.meta.env
+      .VITE_FIREBASE_API_KEY,
 
   authDomain:
-    "finsight-ai-7f5a7.firebaseapp.com",
+    import.meta.env
+      .VITE_FIREBASE_AUTH_DOMAIN,
 
   projectId:
-    "finsight-ai-7f5a7",
+    import.meta.env
+      .VITE_FIREBASE_PROJECT_ID,
 
   storageBucket:
-    "finsight-ai-7f5a7.firebasestorage.app",
+    import.meta.env
+      .VITE_FIREBASE_STORAGE_BUCKET,
 
   messagingSenderId:
-    "676927053499",
+    import.meta.env
+      .VITE_FIREBASE_MESSAGING_SENDER_ID,
 
   appId:
-    "1:676927053499:web:3ac6e09aff4615c04b939e",
+    import.meta.env
+      .VITE_FIREBASE_APP_ID,
 };
 
 const app =
