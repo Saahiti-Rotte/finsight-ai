@@ -1,16 +1,78 @@
-# React + Vite
+# FinSight AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI-powered financial intelligence and expense analytics platform built using React, Firebase, Firestore, and Vercel.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Live Demo
 
-## React Compiler
+https://finsight-ai-two.vercel.app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Secure Firebase Authentication
+- Real-time Firestore Database
+- Dynamic Income Management
+- AI-powered Financial Insights
+- Smart Spending Analytics
+- Expense Categorization
+- Financial Health Scoring
+- Monthly Trend Forecasting
+- Cloud Synchronization
+- Responsive Fintech Dashboard
+- Transaction CRUD Operations
+- AI Financial Assistant
+- PDF Financial Reports
+
+---
+
+## Tech Stack
+
+- React + Vite
+- Firebase Authentication
+- Cloud Firestore
+- Recharts
+- Vercel Deployment
+
+---
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard](./public/screenshots/dashboard.png)
+
+---
+
+### Analytics
+
+![Analytics](./public/screenshots/analytics.png)
+
+---
+
+### AI Assistant
+
+![AI Assistant](./public/screenshots/assistant.png)
+
+---
+
+## Installation
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## Deployment
+
+Deployed globally using Vercel.
+
+---
+
+## Author
+
+Saahiti Rotte
