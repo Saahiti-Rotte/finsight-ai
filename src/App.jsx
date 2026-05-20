@@ -26,11 +26,8 @@ import AuthPage from "./pages/AuthPage";
 import LoadingScreen from "./components/LoadingScreen";
 
 import {
-  transactions as initialData,
-} from "./data/financeData";
-
-import {
   subscribeToTransactions,
+  getIncome,
 } from "./services/firestoreService";
 
 export default function App() {
@@ -44,13 +41,17 @@ export default function App() {
 
   // TRANSACTIONS
   const [transactions, setTransactions] =
-    useState(initialData);
+    useState([]);
+
+  // MONTHLY INCOME
+  const [monthlyIncome, setMonthlyIncome] =
+    useState(0);
 
   // CURRENT PAGE
   const [currentPage, setCurrentPage] =
     useState("dashboard");
 
-  // AUTH + REALTIME FIRESTORE
+  // AUTH + FIRESTORE
   useEffect(() => {
     const unsubscribeAuth =
       onAuthStateChanged(
@@ -58,24 +59,27 @@ export default function App() {
         async (currentUser) => {
           setUser(currentUser);
 
-          // USER LOGGED IN
           if (currentUser) {
+            // LOAD INCOME
+            const income =
+              await getIncome(
+                currentUser.uid
+              );
+
+            setMonthlyIncome(
+              income
+            );
+
+            // REALTIME TRANSACTIONS
             const unsubscribeFirestore =
               subscribeToTransactions(
                 currentUser.uid,
                 (
                   cloudTransactions
                 ) => {
-                  if (
-                    cloudTransactions.length >
-                    0
-                  ) {
-                    setTransactions(
-                      cloudTransactions
-                    );
-                  } else {
-                    setTransactions([]);
-                  }
+                  setTransactions(
+                    cloudTransactions
+                  );
                 }
               );
 
@@ -85,8 +89,9 @@ export default function App() {
               unsubscribeFirestore();
           }
 
-          // USER LOGGED OUT
           setTransactions([]);
+
+          setMonthlyIncome(0);
 
           setLoading(false);
         }
@@ -96,12 +101,12 @@ export default function App() {
       unsubscribeAuth();
   }, []);
 
-  // LOADING SCREEN
+  // LOADING
   if (loading) {
     return <LoadingScreen />;
   }
 
-  // NOT LOGGED IN
+  // LOGIN PAGE
   if (!user) {
     return (
       <AuthPage
@@ -121,6 +126,26 @@ export default function App() {
     0
   );
 
+  // BUDGET LEFT
+  const budgetLeft =
+    monthlyIncome - totalSpent;
+
+  // SAVINGS %
+  const savingsScore =
+    monthlyIncome > 0
+      ? Math.max(
+          0,
+          Math.min(
+            100,
+            Math.floor(
+              (budgetLeft /
+                monthlyIncome) *
+                100
+            )
+          )
+        )
+      : 0;
+
   // SUBSCRIPTIONS
   const subscriptions = expenses
     .filter(
@@ -128,24 +153,10 @@ export default function App() {
         t.category?.toLowerCase() ===
         "subscription"
     )
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  // BUDGET
-  const budget = 50000;
-
-  const budgetLeft =
-    budget - totalSpent;
-
-  // SAVINGS SCORE
-  const savingsScore = Math.max(
-    40,
-    Math.min(
-      100,
-      Math.floor(
-        (budgetLeft / budget) * 100
-      )
-    )
-  );
+    .reduce(
+      (sum, t) => sum + t.amount,
+      0
+    );
 
   // CATEGORY TOTALS
   const categoryTotals = {};
@@ -159,7 +170,7 @@ export default function App() {
       t.amount;
   });
 
-  // CATEGORY CHART DATA
+  // CATEGORY DATA
   const categoryData =
     Object.entries(categoryTotals).map(
       ([name, value]) => ({
@@ -237,6 +248,13 @@ export default function App() {
               categoryData={
                 categoryData
               }
+              monthlyIncome={
+                monthlyIncome
+              }
+              setMonthlyIncome={
+                setMonthlyIncome
+              }
+              user={user}
             />
           )}
 
@@ -263,7 +281,7 @@ export default function App() {
             />
           )}
 
-          {/* AI PAGE */}
+          {/* AI */}
           {currentPage === "ai" && (
             <AIPage
               transactions={

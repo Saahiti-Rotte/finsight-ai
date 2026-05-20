@@ -15,12 +15,19 @@ export default function AddTransaction({
   const [amount, setAmount] =
     useState("");
 
+  const [category, setCategory] =
+    useState("");
+
+  // SUBMIT
   const handleSubmit = async (
     e
   ) => {
     e.preventDefault();
 
-    if (!name || !amount) {
+    if (
+      !name ||
+      !amount
+    ) {
       return;
     }
 
@@ -38,12 +45,19 @@ export default function AddTransaction({
     const autoCategory =
       categorizeTransaction(name);
 
+    // FINAL CATEGORY
+    const finalCategory =
+      category || autoCategory;
+
+    // TRANSACTION
     const newTransaction = {
       name,
 
-      category: autoCategory,
+      category:
+        finalCategory,
 
-      amount: Number(amount),
+      amount:
+        Number(amount),
 
       income: false,
 
@@ -57,7 +71,7 @@ export default function AddTransaction({
       ...prev,
     ]);
 
-    // SAVE TO USER COLLECTION
+    // SAVE FIRESTORE
     await saveTransaction(
       user.uid,
       newTransaction
@@ -67,6 +81,8 @@ export default function AddTransaction({
     setName("");
 
     setAmount("");
+
+    setCategory("");
   };
 
   return (
@@ -79,6 +95,7 @@ export default function AddTransaction({
         onSubmit={handleSubmit}
         className="txn-form"
       >
+        {/* NAME */}
         <input
           className="txn-input"
           placeholder="Transaction name"
@@ -88,6 +105,7 @@ export default function AddTransaction({
           }
         />
 
+        {/* AMOUNT */}
         <input
           className="txn-input"
           placeholder="Amount"
@@ -100,6 +118,62 @@ export default function AddTransaction({
           }
         />
 
+        {/* CATEGORY */}
+        <select
+          className="txn-input"
+          value={category}
+          onChange={(e) =>
+            setCategory(
+              e.target.value
+            )
+          }
+        >
+          <option value="">
+            Auto Detect Category
+          </option>
+
+          <option value="Food">
+            Food
+          </option>
+
+          <option value="Shopping">
+            Shopping
+          </option>
+
+          <option value="Travel">
+            Travel
+          </option>
+
+          <option value="Bills">
+            Bills
+          </option>
+
+          <option value="Subscription">
+            Subscription
+          </option>
+
+          <option value="Health">
+            Health
+          </option>
+
+          <option value="Education">
+            Education
+          </option>
+
+          <option value="Entertainment">
+            Entertainment
+          </option>
+
+          <option value="Investment">
+            Investment
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+        </select>
+
+        {/* BUTTON */}
         <button
           type="submit"
           className="txn-btn"
@@ -114,11 +188,12 @@ export default function AddTransaction({
 
           fontSize: "12px",
 
-          color: "#666",
+          color: "#64748b",
         }}
       >
-        Synced securely to your
-        cloud account.
+        Transactions sync securely
+        to your cloud account in
+        real time.
       </div>
     </div>
   );

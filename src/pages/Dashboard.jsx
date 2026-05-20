@@ -24,6 +24,10 @@ import ExportReport from "../components/ExportReport";
 
 import EmptyState from "../components/EmptyState";
 
+import IncomeCard from "../components/IncomeCard";
+
+import SmartInsights from "../components/SmartInsights";
+
 export default function Dashboard({
   transactions,
   setTransactions,
@@ -35,6 +39,11 @@ export default function Dashboard({
 
   spendTrendData,
   categoryData,
+
+  monthlyIncome,
+  setMonthlyIncome,
+
+  user,
 }) {
   // EMPTY STATE
   const hasTransactions =
@@ -42,6 +51,17 @@ export default function Dashboard({
 
   return (
     <>
+      {/* INCOME */}
+      <IncomeCard
+        monthlyIncome={
+          monthlyIncome
+        }
+        setMonthlyIncome={
+          setMonthlyIncome
+        }
+        user={user}
+      />
+
       {/* EMPTY EXPERIENCE */}
       {!hasTransactions ? (
         <>
@@ -55,7 +75,7 @@ export default function Dashboard({
         </>
       ) : (
         <>
-          {/* AI INSIGHT */}
+          {/* AI BANNER */}
           <AIInsightBanner
             totalSpent={
               totalSpent
@@ -75,6 +95,19 @@ export default function Dashboard({
             }
             subscriptions={
               subscriptions
+            }
+          />
+
+          {/* SMART INSIGHTS */}
+          <SmartInsights
+            transactions={
+              transactions
+            }
+            monthlyIncome={
+              monthlyIncome
+            }
+            totalSpent={
+              totalSpent
             }
           />
 
